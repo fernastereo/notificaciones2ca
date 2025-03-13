@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h2>Intranet</h2>
+  <h1 class="text-3xl font-bold underline">Intranet</h1>
 </template>
 
 <style scoped>
