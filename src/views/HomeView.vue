@@ -28,7 +28,7 @@
               <!-- Sidebar component, swap this element with another sidebar if you like -->
               <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
                 <div class="flex h-16 shrink-0 items-center">
-                  <img class="h-8 w-auto" src="@/assets/logo.png" alt="Curaduria 2 Barranquilla" />
+                  <img class="h-8 w-auto" src="@/assets/logo-removebg.png" alt="Curaduria 2 Barranquilla" />
                 </div>
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -55,8 +55,8 @@
     <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6">
-        <div class="flex h-16 shrink-0 items-center">
-          <img class="h-8 w-auto" src="@/assets/logo.png" alt="Curaduria 2 Barranquilla" />
+        <div class="flex h-16 shrink-0 items-center items-center justify-center">
+          <img class="h-14 w-auto" src="@/assets/logo-removebg.png" alt="Curaduria 2 Barranquilla" />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -119,8 +119,8 @@
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
-    { name: 'Turnos', href: '/turnos', icon: UsersIcon, current: false },
-    { name: 'PQR', href: 'pqr', icon: FolderIcon, current: false },
+    { name: 'Turnos', href: '/turnos', icon: FolderIcon, current: false },
+    { name: 'PQR', href: 'pqr', icon: DocumentDuplicateIcon, current: false },
     { name: 'Reportes', href: 'reportes', icon: ChartPieIcon, current: false },
   ]
 
