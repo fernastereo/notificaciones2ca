@@ -1,11 +1,11 @@
 <script setup>
+  import LoginView from './views/LoginView.vue'
   import HomeView from './views/HomeView.vue'
-  import DashboardView from './views/DashboardView.vue'
 </script>
 
 <template>
   <!-- <HomeView /> -->
-  <DashboardView/>
+  <HomeView/>
 </template>
 
 <style scoped>
