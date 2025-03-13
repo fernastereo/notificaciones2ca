@@ -1,3 +1,7 @@
+import DashboardView from '@/views/DashboardView.vue';
+import PqrView from '@/views/PqrView.vue';
+import ReportesView from '@/views/ReportesView.vue';
+import TurnosView from '@/views/TurnosView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -7,6 +11,26 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: '',
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
+    },
+    {
+      path: '/turnos',
+      name: 'turnos',
+      component: TurnosView,
+    },
+    {
+      path: '/pqr',
+      name: 'pqr',
+      component: PqrView,
+    },
+    {
+      path: '/reportes',
+      name: 'reportes',
+      component: ReportesView,
     },
     {
       path: '/about',
