@@ -107,12 +107,11 @@
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import {
     Bars3Icon,
-    CalendarIcon,
+    ArrowRightStartOnRectangleIcon,
     ChartPieIcon,
     DocumentDuplicateIcon,
     FolderIcon,
     HomeIcon,
-    UsersIcon,
     XMarkIcon,
   } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView } from 'vue-router'
@@ -122,6 +121,7 @@
     { name: 'Turnos', href: '/turnos', icon: FolderIcon, current: false },
     { name: 'PQR', href: 'pqr', icon: DocumentDuplicateIcon, current: false },
     { name: 'Reportes', href: 'reportes', icon: ChartPieIcon, current: false },
+    { name: 'Cerrar Sesión', href: '#', icon: ArrowRightStartOnRectangleIcon, current: false },
   ]
 
 const sidebarOpen = ref(false)
