@@ -1,4 +1,5 @@
-import DashboardView from '@/views/DashboardView.vue';
+import HomeView from '@/views/HomeView.vue';
+import LoginView from '@/views/LoginView.vue';
 import PqrView from '@/views/PqrView.vue';
 import ReportesView from '@/views/ReportesView.vue';
 import TurnosView from '@/views/TurnosView.vue';
@@ -9,13 +10,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: '',
+      name: 'login',
+      component: LoginView,
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView,
+      path: '/home',
+      name: 'home',
+      component: HomeView,
     },
     {
       path: '/turnos',
