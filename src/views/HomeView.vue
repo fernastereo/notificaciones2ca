@@ -40,6 +40,12 @@
                             {{ item.name }}
                           </RouterLink>
                         </li>
+                        <li>
+                          <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold">
+                            <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
+                            Cerrar Sesión
+                          </button>
+                        </li>
                       </ul>
                     </li>
                   </ul>
@@ -68,6 +74,12 @@
                     {{ item.name }}
                   </RouterLink>
                 </li>
+                <li>
+                  <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold">
+                    <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
+                    Cerrar Sesión
+                  </button>
+                </li>
               </ul>
             </li>
             <li class="-mx-6 mt-auto">
@@ -88,7 +100,7 @@
         <Bars3Icon class="size-6" aria-hidden="true" />
       </button>
       <div class="flex-1 text-sm/6 font-semibold text-white">Dashboard</div>
-      <RouterLink href="/profile">
+      <RouterLink to="/profile">
         <span class="sr-only">Your profile</span>
         <img class="size-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
       </RouterLink>
@@ -115,14 +127,20 @@
     XMarkIcon,
   } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView } from 'vue-router'
+  import { useAuth } from '@/composables/useAuth'
+
+  const { isAuthenticated, logout } = useAuth()
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
     { name: 'Turnos', href: '/turnos', icon: FolderIcon, current: false },
     { name: 'PQR', href: 'pqr', icon: DocumentDuplicateIcon, current: false },
     { name: 'Reportes', href: 'reportes', icon: ChartPieIcon, current: false },
-    { name: 'Cerrar Sesión', href: '#', icon: ArrowRightStartOnRectangleIcon, current: false },
   ]
 
-const sidebarOpen = ref(false)
+  const sidebarOpen = ref(false)
+
+  const handleLogout = () => {
+    logout()
+  }
 </script>
