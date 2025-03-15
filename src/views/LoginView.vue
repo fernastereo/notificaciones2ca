@@ -7,7 +7,7 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form class="space-y-6" @submit.prevent="handleLogin">
         <div>
-          <label for="username" class="block text-sm/6 font-medium text-gray-900">Usuario</label>
+          <label for="username" class="block text-sm/6 font-medium text-gray-900">Usuario {{ auth.isAuthenticated }}</label>
           <div class="mt-2">
             <input 
               v-model="username"
@@ -43,7 +43,7 @@
         </div>
 
         <div v-if="loginError" class="p-3 bg-red-100 text-red-700 rounded-md text-xs">
-          {{ loginError }}
+          {{ auth.authError }}
         </div>
 
         <div>
@@ -63,8 +63,10 @@
 <script setup>
   import { ref, reactive } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useAuth } from '@/composables/useAuth'
 
   const router = useRouter()
+  const auth = useAuth()
 
   const username = ref('')
   const password = ref('')
@@ -72,6 +74,7 @@
     username: false,
     password: false
   })
+
   const loginError = ref('')
   const isLoading = ref(false)
 
@@ -102,39 +105,22 @@
   const handleLogin = async () => {
     if (!validateForm()) return
 
-    try {
-      isLoading.value = true
-      loginError.value = ''
-      const VITE_BASE_API_URL = import.meta.env.VITE_BASE_API_URL
+    isLoading.value = true
+    loginError.value = ''
 
-      const response = await fetch(`${VITE_BASE_API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: username.value,
-          password: password.value
-        })
-      })
-
-      const data = await response.json()
-
-      if(data.status === 'error') {
-        loginError.value = data.message
-        throw new Error(data.message || 'Error en el inicio de sesión')
-      }
-
-      //Guardar el token en el store y localStorage
-      authStore.setToken(data.token);
-      authStore.setUser(username.value);
-
-      router.push('/home')
-    } catch (error) {
-      loginError.value = error.message || 'Error en el inicio de sesión'
-    } finally {
-      isLoading.value = false
+    const credentials = {
+      username: username.value,
+      password: password.value
     }
+
+    const success = await auth.login(credentials)
+
+    if (success) {
+      router.push({ name: 'home' })
+    }
+
+    loginError.value = auth.authError
+    isLoading.value = false
   }
 </script>
 <style scoped>
