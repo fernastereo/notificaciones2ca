@@ -60,6 +60,33 @@ export const useAuth = () => {
     } 
   }
 
+  const checkAuth = async () => {
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    if (!token.value) return false;
+
+    try {
+      loading.value = true;
+      const response = await fetch(`${BASE_API_URL}/verify-token`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      if (!response.ok) {
+        logout();
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      logout();
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     user: readonly(user),
     token: readonly(token),
@@ -67,8 +94,9 @@ export const useAuth = () => {
     isAuthenticated,
     login,
     logout,
+    checkAuth,
     setToken,
     setUser,
-  }
+  };
 }
 
