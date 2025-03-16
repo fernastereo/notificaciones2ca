@@ -117,6 +117,7 @@
 
     if (success) {
       router.push({ name: 'home' })
+      return
     }
 
     loginError.value = auth.authError
