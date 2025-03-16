@@ -20,52 +20,73 @@ export const useAuth = () => {
     localStorage.setItem('user', JSON.stringify(newUser))
   }
 
-  const logout = () => {
-    token.value = null
-    user.value = null
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    router.push({ name: 'login' })
-  }
+  const logout = async () => {
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    authError.value = null;
+    console.log(token.value);
+    try {
+      const response = await fetch(`${BASE_API_URL}/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        authError.value = data.message;
+        return false;
+      }
+
+      token.value = null;
+      user.value = null;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return true;
+    } catch (e) {
+      authError.value = e.message;
+      return false;
+    }
+  };
 
   const login = async (credentials) => {
-    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL
-    const { username, password } = credentials
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    const { username, password } = credentials;
 
-    authError.value = null
+    authError.value = null;
 
     try {
       const response = await fetch(`${BASE_API_URL}/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password })
-      })
+        body: JSON.stringify({ username, password }),
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
-      if(data.status === 'error') {
-        authError.value = data.message
-        return false
+      if (data.status === 'error') {
+        authError.value = data.message;
+        return false;
       }
 
       setToken(data.token);
       setUser(data.user);
-      return true
-
+      return true;
     } catch (e) {
-      authError.value = e.message
-      return false
-    } 
-  }
+      authError.value = e.message;
+      return false;
+    }
+  };
 
   const checkAuth = async () => {
     const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
     if (!token.value) return false;
 
     try {
-      loading.value = true;
       const response = await fetch(`${BASE_API_URL}/verify-token`, {
         method: 'GET',
         headers: {
@@ -73,7 +94,9 @@ export const useAuth = () => {
         },
       });
 
-      if (!response.ok) {
+      const data = await response.json();
+
+      if (data.status === 'error') {
         logout();
         return false;
       }
@@ -82,8 +105,6 @@ export const useAuth = () => {
     } catch (e) {
       logout();
       return false;
-    } finally {
-      loading.value = false;
     }
   };
 
