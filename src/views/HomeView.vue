@@ -75,7 +75,7 @@
                   </RouterLink>
                 </li>
                 <li>
-                  <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold">
+                  <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold cursor-pointer">
                     <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
                     Cerrar Sesión
                   </button>
@@ -126,10 +126,11 @@
     HomeIcon,
     XMarkIcon,
   } from '@heroicons/vue/24/outline'
-  import { RouterLink, RouterView, useRoute } from 'vue-router'
+  import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
   import { useAuth } from '@/composables/useAuth'
 
   const { isAuthenticated, logout } = useAuth()
+  const router = useRouter()
   const route = useRoute()
 
   const navigation = [
@@ -145,7 +146,12 @@
     return computed (() => route.name === href.name).value
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    const success = await logout()
+
+    if (success) {
+      router.push({ name: 'login' })
+      return
+    }
   }
 </script>
