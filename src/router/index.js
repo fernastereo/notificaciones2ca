@@ -1,8 +1,5 @@
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
-import PqrView from '@/views/PqrView.vue';
-import ReportesView from '@/views/ReportesView.vue';
-import TurnosView from '@/views/TurnosView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
@@ -17,27 +14,35 @@ const router = createRouter({
     },
     {
       path: '/home',
-      name: 'home',
       component: HomeView,
       meta: { requiresAuth: true },
-    },
-    {
-      path: '/turnos',
-      name: 'turnos',
-      component: TurnosView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/pqr',
-      name: 'pqr',
-      component: PqrView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/reportes',
-      name: 'reportes',
-      component: ReportesView,
-      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '', // Esta será la ruta por defecto -> '/dashboard'
+          name: 'home',
+          component: () => import('@/views/DashboardView.vue'),
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          redirect: { name: 'home' },
+        },
+        {
+          path: 'turnos',
+          name: 'turnos',
+          component: () => import('@/views/TurnosView.vue'),
+        },
+        {
+          path: 'pqr',
+          name: 'pqr',
+          component: () => import('@/views/PqrView.vue'),
+        },
+        {
+          path: 'reportes',
+          name: 'reportes',
+          component: () => import('@/views/ReportesView.vue'),
+        },
+      ],
     },
     {
       path: '/about',
@@ -48,7 +53,7 @@ const router = createRouter({
       // component: () => import('../views/PqrView.vue'),
     },
     {
-      path: '/:catchall(.*)*',
+      path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: 'NotFoundView',
     },
