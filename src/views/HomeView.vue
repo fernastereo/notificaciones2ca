@@ -35,7 +35,7 @@
                     <li>
                       <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in navigation" :key="item.name">
-                          <RouterLink :to="item.href" :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                          <RouterLink :to="item.href" :class="[isActive(item.href) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
                             <component :is="item.icon" class="size-6 shrink-0" aria-hidden="true" />
                             {{ item.name }}
                           </RouterLink>
@@ -69,7 +69,7 @@
             <li>
               <ul role="list" class="-mx-2 space-y-1">
                 <li v-for="item in navigation" :key="item.name">
-                  <RouterLink :to="item.href" :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                  <RouterLink :to="item.href" :class="[isActive(item.href) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
                     <component :is="item.icon" class="size-6 shrink-0" aria-hidden="true" />
                     {{ item.name }}
                   </RouterLink>
@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import {
     Bars3Icon,
@@ -126,19 +126,24 @@
     HomeIcon,
     XMarkIcon,
   } from '@heroicons/vue/24/outline'
-  import { RouterLink, RouterView } from 'vue-router'
+  import { RouterLink, RouterView, useRoute } from 'vue-router'
   import { useAuth } from '@/composables/useAuth'
 
   const { isAuthenticated, logout } = useAuth()
+  const route = useRoute()
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
-    { name: 'Turnos', href: '/turnos', icon: FolderIcon, current: false },
-    { name: 'PQR', href: 'pqr', icon: DocumentDuplicateIcon, current: false },
-    { name: 'Reportes', href: 'reportes', icon: ChartPieIcon, current: false },
+    { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
+    { name: 'Turnos', href: { name: 'turnos' }, icon: FolderIcon },
+    { name: 'PQR', href: { name: 'pqr' }, icon: DocumentDuplicateIcon },
+    { name: 'Reportes', href: { name: 'reportes' }, icon: ChartPieIcon },
   ]
 
   const sidebarOpen = ref(false)
+
+  const isActive = (href) => {
+    return computed (() => route.name === href.name).value
+  }
 
   const handleLogout = () => {
     logout()
