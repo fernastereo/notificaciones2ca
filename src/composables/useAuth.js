@@ -20,10 +20,36 @@ export const useAuth = () => {
     localStorage.setItem('user', JSON.stringify(newUser))
   }
 
+  const getUser = async () => {
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    authError.value = null;
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/user`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        authError.value = data.message;
+        return null;
+      }
+
+      return data.data;
+    } catch (e) {
+      authError.value = e.message;
+      return null;
+    }
+  };
+
   const logout = async () => {
     const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
     authError.value = null;
-    console.log(token.value);
+
     try {
       const response = await fetch(`${BASE_API_URL}/logout`, {
         method: 'POST',
@@ -40,8 +66,8 @@ export const useAuth = () => {
         return false;
       }
 
-      token.value = null;
-      user.value = null;
+      setToken(null);
+      setUser(null);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       return true;
@@ -97,7 +123,10 @@ export const useAuth = () => {
       const data = await response.json();
 
       if (data.status === 'error') {
-        logout();
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         return false;
       }
 
@@ -118,6 +147,7 @@ export const useAuth = () => {
     checkAuth,
     setToken,
     setUser,
+    getUser,
   };
 }
 
