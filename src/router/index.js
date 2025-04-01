@@ -81,8 +81,8 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
-  const isValid = await checkAuth();
-  if (!isValid) {
+  const isValidToken = await checkAuth();
+  if (!isValidToken) {
     next({
       name: 'login',
       query: { redirect: to.fullPath },
