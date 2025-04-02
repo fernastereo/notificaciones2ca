@@ -33,7 +33,7 @@
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <MenuItems :navigation="navigation"/>
+                      <MenuItems/>
                     </li>
                   </ul>
                 </nav>
@@ -54,7 +54,7 @@
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <MenuItems :navigation="navigation"/>
+              <MenuItems/>
             </li>
             <li class="-mx-6 mt-auto">
               <RouterLink to="/profile" class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-gray-800">
@@ -88,15 +88,7 @@
 <script setup>
   import { ref, computed } from 'vue'
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-  import {
-    Bars3Icon,
-    ArrowRightStartOnRectangleIcon,
-    ChartPieIcon,
-    DocumentDuplicateIcon,
-    FolderIcon,
-    HomeIcon,
-    XMarkIcon,
-  } from '@heroicons/vue/24/outline'
+  import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView, useRouter } from 'vue-router'
   import { useAuth } from '@/composables/useAuth'
   import ActiveUser from '@/components/menubar/ActiveUser.vue'
@@ -104,13 +96,6 @@
 
   const { isAuthenticated, logout } = useAuth()
   const router = useRouter()
-
-  const navigation = [
-    { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
-    { name: 'Turnos', href: { name: 'turnos' }, icon: FolderIcon },
-    { name: 'PQR', href: { name: 'pqr' }, icon: DocumentDuplicateIcon },
-    { name: 'Reportes', href: { name: 'reportes' }, icon: ChartPieIcon },
-  ]
 
   const sidebarOpen = ref(false)
 

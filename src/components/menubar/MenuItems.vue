@@ -17,10 +17,16 @@
 
 <script setup>
   import { computed } from 'vue'
-  import { ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
+  import { ChartPieIcon, DocumentDuplicateIcon, FolderIcon, HomeIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, useRoute } from 'vue-router'
-  const { navigation } = defineProps(['navigation'])
   const route = useRoute()
+  
+  const navigation = [
+    { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
+    { name: 'Turnos', href: { name: 'turnos' }, icon: FolderIcon },
+    { name: 'PQR', href: { name: 'pqr' }, icon: DocumentDuplicateIcon },
+    { name: 'Reportes', href: { name: 'reportes' }, icon: ChartPieIcon },
+  ]
 
   const isActive = (href) => {
     return computed (() => route.name === href.name).value
