@@ -33,20 +33,7 @@
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <ul role="list" class="-mx-2 space-y-1">
-                        <li v-for="item in navigation" :key="item.name">
-                          <RouterLink :to="item.href" :class="[isActive(item.href) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
-                            <component :is="item.icon" class="size-6 shrink-0" aria-hidden="true" />
-                            {{ item.name }}
-                          </RouterLink>
-                        </li>
-                        <li>
-                          <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold">
-                            <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
-                            Cerrar Sesión
-                          </button>
-                        </li>
-                      </ul>
+                      <MenuItems :navigation="navigation"/>
                     </li>
                   </ul>
                 </nav>
@@ -67,26 +54,11 @@
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <ul role="list" class="-mx-2 space-y-1">
-                <li v-for="item in navigation" :key="item.name">
-                  <RouterLink :to="item.href" :class="[isActive(item.href) ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
-                    <component :is="item.icon" class="size-6 shrink-0" aria-hidden="true" />
-                    {{ item.name }}
-                  </RouterLink>
-                </li>
-                <li>
-                  <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold cursor-pointer">
-                    <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
-                    Cerrar Sesión
-                  </button>
-                </li>
-              </ul>
+              <MenuItems :navigation="navigation"/>
             </li>
             <li class="-mx-6 mt-auto">
               <RouterLink to="/profile" class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-gray-800">
-                <img class="size-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-                <span class="sr-only">Your profile</span>
-                <span aria-hidden="true">Tom Cook</span>
+                <ActiveUser/>
               </RouterLink>
             </li>
           </ul>
@@ -101,8 +73,7 @@
       </button>
       <div class="flex-1 text-sm/6 font-semibold text-white">Dashboard</div>
       <RouterLink to="/profile">
-        <span class="sr-only">Your profile</span>
-        <img class="size-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+        <ActiveUser/>
       </RouterLink>
     </div>
 
@@ -126,12 +97,13 @@
     HomeIcon,
     XMarkIcon,
   } from '@heroicons/vue/24/outline'
-  import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+  import { RouterLink, RouterView, useRouter } from 'vue-router'
   import { useAuth } from '@/composables/useAuth'
+  import ActiveUser from '@/components/menubar/ActiveUser.vue'
+  import MenuItems from '@/components/menubar/MenuItems.vue'
 
   const { isAuthenticated, logout } = useAuth()
   const router = useRouter()
-  const route = useRoute()
 
   const navigation = [
     { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
@@ -141,10 +113,6 @@
   ]
 
   const sidebarOpen = ref(false)
-
-  const isActive = (href) => {
-    return computed (() => route.name === href.name).value
-  }
 
   const handleLogout = async () => {
     const success = await logout()
