@@ -1,5 +1,5 @@
 <template>
-  <LoadingSpinner class="pb-4" v-if="isLoading" />
+  <LoadingSpinner class="pb-4" v-if="isLoading" :size="24" :showMessage="false"/>
   <div v-else class="flex items-center gap-x-4 md:py-3">
     <span class="sr-only">Your profile</span>
     <img v-if="userData?.avatar" class="size-8 rounded-full bg-gray-800" :src="userData.avatar" :alt="`${userData.name} avatar`" />
