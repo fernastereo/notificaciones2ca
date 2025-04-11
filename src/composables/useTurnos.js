@@ -16,19 +16,24 @@ export const useTurnos = () => {
   });
   const apiError = ref('');
 
-  const getTurnos = async (page = 1, limit = 10) => {
+  const getTurnos = async (page = 1, limit = 10, search = '') => {
     apiError.value = null;
 
     try {
-      const response = await fetch(
-        `${BASE_API_URL}/expedientes?page=${page}&limit=${limit}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.value}`,
-          },
-        }
-      );
+      const url = new URL(`${BASE_API_URL}/expedientes`);
+      url.searchParams.append('page', page);
+      url.searchParams.append('limit', limit);
+      if (search) {
+        url.searchParams.append('search', search);
+      }
+      console.log('🚀 ~ getTurnos ~ url:', url);
+
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
 
       const data = await response.json();
 
