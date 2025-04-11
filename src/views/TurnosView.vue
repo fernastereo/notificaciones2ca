@@ -1,9 +1,9 @@
 <template >
-  <div>
-    <h1>Turnos</h1>
-  </div>
+  <TurnosList />
 </template>
 <script setup>
+  import TurnosList from '@/components/turnos/TurnosList.vue'
+
 </script>
 <style scoped>
   
