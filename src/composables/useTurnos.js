@@ -26,7 +26,6 @@ export const useTurnos = () => {
       if (search) {
         url.searchParams.append('search', search);
       }
-      console.log('🚀 ~ getTurnos ~ url:', url);
 
       const response = await fetch(url, {
         headers: {

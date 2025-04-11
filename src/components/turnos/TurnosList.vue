@@ -6,10 +6,11 @@
       </div>
       <div class="mt-4 sm:mt-0 sm:block md:flex justify-between md:w-md">
         <div class="flex flex-1 items-center justify-center mb-4 md:mb-0 md:mx-6 md:justify-end">
-          <div class="grid w-full max-w-lg grid-cols-1 lg:max-w-xs">
-            <input type="search" name="search" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" placeholder="Buscar..." />
-            <MagnifyingGlassIcon class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400" aria-hidden="true" />
-          </div>
+          <SearchInput 
+            @input="handleLocalSearch"
+            @search="handleApiSearch"
+            placeholder="Buscar por número de turno, dirección o responsable..."
+          />
         </div>
         <button type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
           <PlusIcon class="-ml-0.5 size-5" aria-hidden="true" />
@@ -37,7 +38,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200">
-                <tr v-for="expediente in turnos.expedientes" :key="expediente.id">
+                <tr v-for="expediente in filteredExpedientes" :key="expediente.id">
                   <td class="py-4 pr-3 pl-4 text-sm whitespace-nowrap text-gray-700 sm:pl-0">{{ `${expediente.fecha} - ${expediente.hora}` }}</td>
                   <td class="px-3 py-4 text-sm font-medium whitespace-nowrap text-gray-900">{{ `${expediente.numturno.toString().padStart(4, '0')}-${expediente.vigencia}` }}</td>
                   <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
@@ -55,41 +56,67 @@
                 </tr>
               </tbody>
             </table>
-            <Pagination :pagination="turnos.pagination" @page-change="cambiarPagina" />
+            <Pagination :pagination="turnos.pagination" @page-change="changePage" />
           </template>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script setup>
-  import { ref } from 'vue'
-  import Pagination from '@/components/common/Pagination.vue'
-  import Badge from '@/components/common/Badge.vue'
-  import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
-  import { PlusIcon, PencilSquareIcon, MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
-  import { RouterLink } from 'vue-router'
-  import { useTurnos } from '@/composables/useTurnos'
-  import { onMounted } from 'vue'
+import { ref, computed } from 'vue'
+import Pagination from '@/components/common/Pagination.vue'
+import Badge from '@/components/common/Badge.vue'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import SearchInput from '@/components/common/SearchInput.vue'
+import { PlusIcon, PencilSquareIcon } from '@heroicons/vue/20/solid'
+import { RouterLink } from 'vue-router'
+import { useTurnos } from '@/composables/useTurnos'
+import { onMounted } from 'vue'
 
-  const isLoading = ref(false)
-  const { getTurnos, turnos, apiError } = useTurnos()
+const isLoading = ref(false)
+const { getTurnos, turnos, apiError } = useTurnos()
+const searchTerm = ref('')
 
-  const fetchTurnos = async (page = 1) => {
-    isLoading.value = true
-    try {
-      await getTurnos(page)
-    } finally {
-      isLoading.value = false
-    }
-  }
+const filteredExpedientes = computed(() => {
+  if (!searchTerm.value) return turnos.value.expedientes
 
-  onMounted(async () => {
-    await fetchTurnos()
+  const term = searchTerm.value.toLowerCase()
+  return turnos.value.expedientes.filter(expediente => {
+    return (
+      expediente.numturno.toString().includes(term) ||
+      expediente.direccion.toLowerCase().includes(term) ||
+      expediente.responsables[0].nombre.toLowerCase().includes(term)
+    )
   })
+})
 
-  const cambiarPagina = async (nuevaPagina) => {
-    await fetchTurnos(nuevaPagina)
-  };
+const fetchTurnos = async (page = 1, search = '') => {
+  isLoading.value = true
+  try {
+    await getTurnos(page, 10, search)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const handleLocalSearch = (query) => {
+  searchTerm.value = query
+}
+
+const handleApiSearch = (query) => {
+  searchTerm.value = query
+  
+  fetchTurnos(1, query)
+}
+
+onMounted(async () => {
+  await fetchTurnos()
+})
+
+const changePage = async (nuevaPagina) => {
+  await fetchTurnos(nuevaPagina, searchTerm.value)
+}
 </script>
 
