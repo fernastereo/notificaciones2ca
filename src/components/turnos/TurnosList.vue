@@ -1,8 +1,11 @@
 <template >
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
+      <div class="sm:flex-auto flex items-center gap-x-1.5">
         <h1 class="text-2xl font-semibold text-gray-900">Turnos</h1>
+        <button type="button" @click="fetchTurnos" class="inline-flex pt-1 items-center gap-x-1.5 rounded-md text-center text-sm font-semibold">
+          <ArrowPathIcon class="size-6" :class="{ 'animate-spin': isLoading }"/>
+        </button>
       </div>
       <div class="mt-4 sm:mt-0 sm:block md:flex justify-between md:w-md">
         <div class="flex flex-1 items-center justify-center mb-4 md:mb-0 md:mx-6 md:justify-end">
@@ -38,7 +41,7 @@
   import Pagination from '@/components/common/Pagination.vue'
   import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
   import SearchInput from '@/components/common/SearchInput.vue'
-  import { PlusIcon } from '@heroicons/vue/20/solid'
+  import { PlusIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
   import { useTurnos } from '@/composables/useTurnos'
 
   const isLoading = ref(false)
