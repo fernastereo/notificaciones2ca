@@ -38,7 +38,7 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import TurnosTable from '@/components/turnos/TurnosTable.vue'
+  import TurnosTable from '@/components/turnos/content/TurnosTable.vue'
   import Pagination from '@/components/common/Pagination.vue'
   import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
   import SearchInput from '@/components/common/SearchInput.vue'
