@@ -15,9 +15,11 @@ export const useTurnos = () => {
     },
   });
   const apiError = ref('');
+  const loading = ref(false);
 
   const getTurnos = async (page = 1, limit = 10, search = '') => {
     apiError.value = null;
+    loading.value = true;
 
     try {
       const url = new URL(`${BASE_API_URL}/expedientes`);
@@ -52,12 +54,46 @@ export const useTurnos = () => {
     } catch (error) {
       apiError.value = error.message;
       return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const createTurno = async (turnoData) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/expedientes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify(turnoData),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        apiError.value = data.message;
+        return null;
+      }
+
+      return data.data;
+    } catch (error) {
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
     }
   };
 
   return {
     getTurnos,
+    createTurno,
     turnos,
     apiError,
+    loading,
   };
 };
