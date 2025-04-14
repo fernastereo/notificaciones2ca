@@ -15,7 +15,7 @@
             placeholder="Buscar..."
           />
         </div>
-        <button type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <button type="button" @click="navigateTo({ name: 'nuevo-turno' })" class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
           <PlusIcon class="-ml-0.5 size-5" aria-hidden="true" />
           Nuevo Turno
         </button>
@@ -37,6 +37,7 @@
 
 <script setup>
   import { ref, computed, onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
   import TurnosTable from '@/components/turnos/TurnosTable.vue'
   import Pagination from '@/components/common/Pagination.vue'
   import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
@@ -44,6 +45,7 @@
   import { PlusIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
   import { useTurnos } from '@/composables/useTurnos'
 
+  const router = useRouter()
   const isLoading = ref(false)
   const { getTurnos, turnos, apiError } = useTurnos()
   const searchTerm = ref('')
@@ -88,6 +90,10 @@
   onMounted(async () => {
     await fetchTurnos()
   })
+
+  const navigateTo = (route) => {
+    router.push(route)
+  }
 </script>
 
 

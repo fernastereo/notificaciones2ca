@@ -1,10 +1,10 @@
-<template >
-  <TurnosList />
+<template>
+  <RouterView />
 </template>
-<script setup>
-  import TurnosList from '@/components/turnos/TurnosList.vue'
 
+<script setup>
 </script>
+
 <style scoped>
   
 </style>

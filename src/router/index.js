@@ -29,8 +29,24 @@ const router = createRouter({
         },
         {
           path: 'turnos',
-          name: 'turnos',
           component: () => import('@/views/TurnosView.vue'),
+          children: [
+            {
+              path: '',
+              name: 'turnos',
+              component: () => import('@/components/turnos/TurnosList.vue'),
+            },
+            {
+              path: 'nuevo',
+              name: 'nuevo-turno',
+              component: () => import('@/components/turnos/TurnosForm.vue'),
+            },
+            {
+              path: 'editar/:id',
+              name: 'editar-turno',
+              component: () => import('@/components/turnos/TurnosForm.vue'),
+            },
+          ],
         },
         {
           path: 'pqr',

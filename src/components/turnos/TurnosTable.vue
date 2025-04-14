@@ -40,7 +40,7 @@
         </td>
         <td class="relative py-3 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
           <RouterLink 
-            :to="'/home/turnos/' + expediente.id" 
+            :to="{ name: 'editar-turno', params: { id: expediente.id } }" 
             class="text-indigo-600 hover:text-indigo-900"
           >
             <PencilSquareIcon class="size-5" />
