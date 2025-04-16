@@ -44,10 +44,13 @@
                 </div>
 
                 <!-- Responsables -->
-                <div class="sm:col-span-2">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">Responsables</label>
+                <div class="sm:col-span-4">
+                  <div class="flex items-center gap-2">
+                    <label class="block text-sm font-medium leading-6 text-gray-900">Responsables</label>
+                    <button type="button" @click="addResponsable" class="relative rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group"><PlusIcon class="h-5 w-5" aria-hidden="true" /><span class="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100">Agregar responsable</span></button>
+                  </div>
                   <div class="mt-2 space-y-4">
-                    <div v-for="(responsable, index) in formData.responsables" :key="index" class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3">
+                    <div v-for="(responsable, index) in formData.responsables" :key="index" class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-7">
                       <div>
                         <label :for="'tipo-' + index" class="block text-sm font-medium leading-6 text-gray-900">Tipo</label>
                         <div class="mt-2">
@@ -62,6 +65,35 @@
                               {{ tipo.nombre }}
                             </option>
                           </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label :for="'tipo-identificacion-' + index" class="block text-sm font-medium leading-6 text-gray-900">Tipo ID</label>
+                        <div class="mt-2">
+                          <select
+                            :id="'tipo-identificacion-' + index"
+                            v-model="responsable.tipo_identificacion"
+                            required
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          >
+                            <option value="">Seleccione tipo ID</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label :for="'identificacion-' + index" class="block text-sm font-medium leading-6 text-gray-900">Identificación</label>
+                        <div class="mt-2">
+                          <input
+                            :id="'identificacion-' + index"
+                            type="text"
+                            v-model="responsable.identificacion"
+                            required
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          />
                         </div>
                       </div>
                       <div>
@@ -88,18 +120,23 @@
                           />
                         </div>
                       </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <button
-                        type="button"
-                        @click="addResponsable"
-                        class="relative rounded-full bg-indigo-600 p-2 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group"
-                      >
-                        <PlusIcon class="h-5 w-5" aria-hidden="true" />
-                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100">
-                          Agregar responsable
-                        </span>
-                      </button>
+                      <div>
+                        <label :for="'correo-' + index" class="block text-sm font-medium leading-6 text-gray-900">Correo</label>
+                        <div class="mt-2">
+                          <input
+                            :id="'correo-' + index"
+                            type="email"
+                            v-model="responsable.correo"
+                            required
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                      </div>
+                      <div class="flex items-end">
+                        <button type="button" @click="removeResponsable(index)" class="rounded-full bg-red-600 p-2 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                          <TrashIcon class="h-5 w-5" aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -116,7 +153,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTurnos } from '@/composables/useTurnos'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const route = useRoute()
@@ -139,8 +176,11 @@ const formData = reactive({
   responsables: [
     {
       tiporesponsable_id: '',
+      tipo_identificacion: '',
+      identificacion: '',
       nombre: '',
-      telefono: ''
+      telefono: '',
+      correo: ''
     }
   ]
 })
@@ -148,8 +188,11 @@ const formData = reactive({
 const addResponsable = () => {
   formData.responsables.push({
     tiporesponsable_id: '',
+    tipo_identificacion: '',
+    identificacion: '',
     nombre: '',
-    telefono: ''
+    telefono: '',
+    correo: ''
   })
 }
 
