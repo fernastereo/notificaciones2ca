@@ -26,7 +26,7 @@
         :class="['progress-bar h-1', 
           alertMessage.type === 'success' ? 'bg-green-500' : 
           alertMessage.type === 'error' ? 'bg-red-500' : 'bg-yellow-500']"
-        :style="{ animation: 'progress-bar-shrink 10s linear forwards' }"
+        :style="{ animation: 'progress-bar-shrink 5s linear forwards' }"
         :key="alertMessage.timestamp"
       ></div>
     </div>
@@ -104,10 +104,7 @@
             required
           >
             <option value="">Seleccionar...</option>
-            <option value="DNI">DNI</option>
-            <option value="Pasaporte">Pasaporte</option>
-            <option value="Cédula">Cédula</option>
-            <option value="RUC">RUC</option>
+            <option v-for="tipo in tiposDocumento" :key="tipo.id" :value="tipo.id">{{ tipo.nombre }}</option>
           </select>
           <p v-if="formErrors.identificationType" class="mt-1 text-sm text-red-600">{{ formErrors.identificationType }}</p>
         </div>
@@ -158,15 +155,15 @@
       <div class="mt-4 flex justify-end space-x-3">
         <button 
           @click="cancelForm" 
-          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
         >
           Cancelar
         </button>
         <button 
           @click="addOrUpdatePerson" 
-          class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          {{ editIndex !== null ? 'Guardar Cambios' : 'Guardar' }}
+          {{ editIndex !== null ? 'Actualizar' : 'Agregar' }}
         </button>
       </div>
     </div>
@@ -199,7 +196,6 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identificación</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dirección</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
@@ -211,7 +207,6 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ person.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identification }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identificationType }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.address }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.personType }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.phone }}</td>
@@ -237,7 +232,11 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useTiposDocumento } from '@/composables/useTiposDocumento'
+
+// Composable para tipos de documento
+const { tiposDocumento, loading: loadingTipos, getTiposDocumento } = useTiposDocumento()
 
 // Estado para controlar la visibilidad del formulario
 const showForm = ref(false)
@@ -247,7 +246,6 @@ const formData = reactive({
   name: '',
   identification: '',
   identificationType: '',
-  address: '',
   personType: '',
   email: '',
   phone: ''
@@ -258,7 +256,6 @@ const formErrors = reactive({
   name: '',
   identification: '',
   identificationType: '',
-  address: '',
   personType: '',
   email: '',
   phone: ''
@@ -314,12 +311,6 @@ const validateForm = () => {
   // Validar tipo de identificación
   if (!formData.identificationType) {
     formErrors.identificationType = 'Seleccione un tipo de identificación'
-    isValid = false
-  }
-  
-  // Validar dirección
-  if (!formData.address.trim()) {
-    formErrors.address = 'La dirección es obligatoria'
     isValid = false
   }
   
@@ -448,22 +439,32 @@ const showAlert = (text, type = 'info') => {
   alertMessage.type = type
   alertMessage.show = true
   
-  // Auto-cerrar después de 10 segundos
+  // Auto-cerrar después de 5 segundos
   setTimeout(() => {
     if (alertMessage.text === text) {
       alertMessage.show = false
     }
-  }, 10000)
+  }, 5000)
 }
 
 // Función para cerrar alerta
 const closeAlert = () => {
   alertMessage.show = false
 }
+
+// Cargar tipos de documento al montar el componente
+onMounted(async () => {
+  await getTiposDocumento()
+})
 </script>
 
 <style>
 
+/* Estilos para las opciones de los select */
+select option {
+  font-size: 0.875rem; /* text-sm equivalente a 14px */
+  padding: 0.25rem 0.5rem;
+}
 
 /* Estado vacío */
 .empty-state {
