@@ -33,7 +33,7 @@
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <MenuItems/>
+                      <MenuItems @logout="handleLogout"/>
                     </li>
                   </ul>
                 </nav>
@@ -54,7 +54,7 @@
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <MenuItems/>
+              <MenuItems @logout="handleLogout"/>
             </li>
             <li class="-mx-6 mt-auto">
               <RouterLink to="/profile" class="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-gray-800">
@@ -100,8 +100,9 @@
   const sidebarOpen = ref(false)
 
   const handleLogout = async () => {
+    console.log('logout')
     const success = await logout()
-
+    console.log(success)
     if (success) {
       router.push({ name: 'login' })
       return

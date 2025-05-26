@@ -1,8 +1,9 @@
 import { ref } from 'vue';
+import { useAuth } from './useAuth';
 
-const token = ref(localStorage.getItem('token') || null);
 export const useTurnos = () => {
   const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+  const { token } = useAuth();
 
   const turnos = ref({
     expedientes: [],

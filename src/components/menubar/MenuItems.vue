@@ -7,7 +7,7 @@
       </RouterLink>
     </li>
     <li>
-      <button @click="handleLogout" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold cursor-pointer">
+      <button @click="$emit('logout')" class="text-gray-400 hover:bg-gray-800 hover:text-white group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold cursor-pointer">
         <ArrowRightStartOnRectangleIcon class="size-6 shrink-0"/>
         Cerrar Sesión
       </button>
@@ -19,6 +19,10 @@
   import { computed } from 'vue'
   import { ChartPieIcon, DocumentDuplicateIcon, FolderIcon, HomeIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, useRoute } from 'vue-router'
+  
+  // Definir el emit
+  const emit = defineEmits(['logout'])
+  
   const route = useRoute()
   
   const navigation = [
