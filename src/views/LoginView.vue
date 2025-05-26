@@ -7,7 +7,7 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form class="space-y-6" @submit.prevent="handleLogin">
         <div>
-          <label for="username" class="block text-sm/6 font-medium text-gray-900">Usuario {{ auth.isAuthenticated }}</label>
+          <label for="username" class="block text-sm/6 font-medium text-gray-900">Usuario</label>
           <div class="mt-2">
             <input 
               v-model="username"

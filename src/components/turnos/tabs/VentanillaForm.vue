@@ -20,7 +20,7 @@
                   <div class="mt-2">
                     <input
                       type="datetime-local" id="fecha" v-model="formData.fecha" disabled
-                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                      class="block w-full rounded-md bg-gray-200 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                   </div>
                 </div>
@@ -59,7 +59,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTurnos } from '@/composables/useTurnos'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import PersonRegistration from '../components/person/PersonRegistration.vue'
+import PersonRegistration from '../components/PersonRegistration.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -119,6 +119,16 @@ const handleSubmit = async () => {
 }
 
 onMounted(() => {
+  // Establecer fecha y hora actual al montar el componente
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  
+  formData.fecha = `${year}-${month}-${day}T${hours}:${minutes}`
+  
   if (isEdit.value) {
     // Aquí cargaríamos los datos del turno a editar usando el turnoId
     console.log('Cargando datos del turno:', turnoId.value)

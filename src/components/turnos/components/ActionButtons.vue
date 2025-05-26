@@ -18,5 +18,5 @@
 </template>
 
 <script setup>
-defineEmits(['cancel', 'submit'])
+  defineEmits(['cancel', 'submit'])
 </script> 
