@@ -119,8 +119,7 @@
             required
           >
             <option value="">Seleccionar...</option>
-            <option value="Natural">Natural</option>
-            <option value="Jurídica">Jurídica</option>
+            <option v-for="tipo in tiposResponsable" :key="tipo.id" :value="tipo.id">{{ tipo.nombre }}</option>
           </select>
           <p v-if="formErrors.personType" class="mt-1 text-sm text-red-600">{{ formErrors.personType }}</p>
         </div>
@@ -206,8 +205,8 @@
           <tr v-for="(person, index) in persons" :key="index" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ person.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identification }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identificationType }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.personType }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiposDocumentoMap.get(person.identificationType) || person.identificationType }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiposResponsableMap.get(person.personType) || person.personType }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -215,13 +214,13 @@
                 @click="editPerson(index)" 
                 class="text-primary hover:text-primary-dark mr-3"
               >
-                Editar
+                <PencilSquareIcon class="h-5 w-5" />
               </button>
               <button 
                 @click="showDeleteConfirmation(index)" 
                 class="text-red-600 hover:text-red-900"
               >
-                Eliminar
+                <TrashIcon class="h-5 w-5" />
               </button>
             </td>
           </tr>
@@ -232,11 +231,23 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
+import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { useTiposDocumento } from '@/composables/useTiposDocumento'
+import { useTiposResponsable } from '@/composables/useTiposResponsable'
 
 // Composable para tipos de documento
 const { tiposDocumento, loading: loadingTipos, getTiposDocumento } = useTiposDocumento()
+const { tiposResponsable, loading: loadingTiposResponsable, getTiposResponsable } = useTiposResponsable()
+
+// Maps para lookup eficiente
+const tiposDocumentoMap = computed(() => {
+  return new Map(tiposDocumento.value.map(tipo => [tipo.id, tipo.nombre]))
+})
+
+const tiposResponsableMap = computed(() => {
+  return new Map(tiposResponsable.value.map(tipo => [tipo.id, tipo.nombre]))
+})
 
 // Estado para controlar la visibilidad del formulario
 const showForm = ref(false)
@@ -455,6 +466,7 @@ const closeAlert = () => {
 // Cargar tipos de documento al montar el componente
 onMounted(async () => {
   await getTiposDocumento()
+  await getTiposResponsable()
 })
 </script>
 
