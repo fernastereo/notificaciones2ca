@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { ComputerDesktopIcon, WindowIcon, ClipboardDocumentCheckIcon, DocumentPlusIcon, CurrencyDollarIcon, DocumentMagnifyingGlassIcon, DocumentCheckIcon } from '@heroicons/vue/20/solid'
 import MobileTabSelector from './components/MobileTabSelector.vue'
@@ -45,6 +45,14 @@ import PreradicacionForm from './tabs/PreradicacionForm.vue'
 
 const router = useRouter()
 const currentTab = ref('Ventanilla')
+
+// Estado para manejar submit handlers de cada tab
+const submitHandlers = ref(new Map())
+
+// Provide función para que los tabs se registren
+provide('registerSubmit', (tabName, submitHandler) => {
+  submitHandlers.value.set(tabName, submitHandler)
+})
 
 // Configuración de las pestañas
 const tabs = [
@@ -98,9 +106,15 @@ const handleCancel = () => {
 
 const handleSubmit = async () => {
   try {
-    // Aquí iría la lógica para guardar los datos
-    // Por ahora solo redirigimos
-    router.push({ name: 'turnos' })
+    // Obtener el handler del tab actual
+    const currentSubmitHandler = submitHandlers.value.get(currentTab.value)
+    
+    if (currentSubmitHandler) {
+      // Ejecutar la lógica de submit del tab activo
+      await currentSubmitHandler()
+    } else {
+      console.warn(`No submit handler registered for tab: ${currentTab.value}`)
+    }
   } catch (error) {
     console.error('Error al guardar:', error)
   }

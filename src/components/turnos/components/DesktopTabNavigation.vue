@@ -33,16 +33,16 @@
 </template>
 
 <script setup>
-defineProps({
-  tabs: {
-    type: Array,
-    required: true
-  },
-  modelValue: {
-    type: String,
-    required: true
-  }
-})
+  defineProps({
+    tabs: {
+      type: Array,
+      required: true
+    },
+    modelValue: {
+      type: String,
+      required: true
+    }
+  })
 
-defineEmits(['update:modelValue'])
+  defineEmits(['update:modelValue'])
 </script> 

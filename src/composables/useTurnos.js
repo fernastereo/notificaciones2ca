@@ -65,24 +65,48 @@ export const useTurnos = () => {
     loading.value = true;
 
     try {
+      const { user } = useAuth();
+
+      const dataToSend = {
+        ...turnoData,
+        user_id: user.value?.id || 1,
+      };
+
+      console.log('Enviando datos al API:', dataToSend);
+
       const response = await fetch(`${BASE_API_URL}/expedientes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,
         },
-        body: JSON.stringify(turnoData),
+        body: JSON.stringify(dataToSend),
       });
 
       const data = await response.json();
+      console.log('Respuesta del API:', data);
 
+      // Verificar si la respuesta HTTP fue exitosa
+      if (!response.ok) {
+        apiError.value = data.message || `Error HTTP: ${response.status}`;
+        return null;
+      }
+
+      // Verificar si hay un campo de error explícito
       if (data.status === 'error') {
         apiError.value = data.message;
         return null;
       }
 
-      return data.data;
+      // Verificar si la operación fue exitosa
+      if (data.status === 'success') {
+        return data; // Retornar toda la respuesta que incluye expediente_id, message, etc.
+      }
+
+      // Si no hay status o es diferente, asumir éxito si response.ok es true
+      return data;
     } catch (error) {
+      console.error('Error en createTurno:', error);
       apiError.value = error.message;
       return null;
     } finally {

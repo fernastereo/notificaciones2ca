@@ -468,6 +468,16 @@ onMounted(async () => {
   await getTiposDocumento()
   await getTiposResponsable()
 })
+
+// Función para obtener las personas (para ser llamada desde el componente padre)
+const getPersons = () => {
+  return persons.value
+}
+
+// Exponer funciones para el componente padre
+defineExpose({
+  getPersons
+})
 </script>
 
 <style>
