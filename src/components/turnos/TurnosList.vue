@@ -90,7 +90,7 @@
       const currentTotal = turnos.value.expedientes.length
       const nextPage = Math.ceil(currentTotal / 10) + 1
       
-      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/expedientes?page=${nextPage}&limit=100`, {
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/expedientes?page=${nextPage}&per_page=100&offset=10`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
