@@ -42,10 +42,9 @@
                       autocomplete="family-name" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                   </div>
                 </div>
-
               </div>
               <!-- Responsables -->
-              <PersonRegistration ref="personRegistrationRef" />
+              <PersonRegistration v-model="personas" />
             </form>
           </div>
         </div>
@@ -63,13 +62,10 @@ import Swal from 'sweetalert2'
 
 const router = useRouter()
 const route = useRoute()
-const { createTurno, loading, apiError } = useTurnos()
+const { createTurno, getTurnoById, updateTurno, loading, apiError } = useTurnos()
 
 // Inject para registrar submit handler
 const registerSubmit = inject('registerSubmit')
-
-// Referencia al componente PersonRegistration
-const personRegistrationRef = ref(null)
 
 const isEdit = computed(() => route.name === 'editar-turno')
 const turnoId = computed(() => route.params.id)
@@ -81,22 +77,55 @@ const formData = reactive({
   direccion: ''
 })
 
+// Estado para las personas
+const personas = ref([])
+
 const handleSubmit = async () => {
-  // console.log("🚀 ~ handleSubmit ~ formData:", formData)
-  // return
   try {
+    if (personas.value.length === 0) {
+      alert('Debe agregar al menos una persona responsable')
+      return
+    }
+
     if (isEdit.value) {
-      // Lógica para actualizar el turno
-      console.log('Actualizando turno:', turnoId.value)
-    } else {
-      // Obtener las personas del componente PersonRegistration
-      const personas = personRegistrationRef.value?.getPersons() || []
-      
-      if (personas.length === 0) {
-        alert('Debe agregar al menos una persona responsable')
-        return
+      // Transformar los datos al formato esperado por el endpoint
+      const turnoData = {
+        direccion: formData.direccion,
+        responsables: personas.value.map(persona => ({
+          nombre: persona.name,
+          tiporesponsable_id: parseInt(persona.personType),
+          documento: persona.identification,
+          telefono: persona.phone,
+          email: persona.email,
+          tipodocumento_id: parseInt(persona.identificationType)
+        }))
       }
 
+      const result = await updateTurno(turnoId.value, turnoData)
+      
+      if (result) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Turno actualizado exitosamente',
+          text: `Número de turno: ${formData.turno}`,
+          showConfirmButton: true,
+          confirmButtonText: 'Ir a Home',
+          confirmButtonColor: '#4f39f6'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            router.push({ name: 'turnos' })
+          }
+        })
+      } else {
+        const errorMessage = apiError.value || 'Error desconocido'
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al actualizar el turno',
+          text: errorMessage,
+          showConfirmButton: true
+        })
+      }
+    } else {
       // Separar fecha y hora del campo datetime-local
       const fechaHora = new Date(formData.fecha)
       const fecha = fechaHora.toISOString().split('T')[0] // YYYY-MM-DD
@@ -107,7 +136,7 @@ const handleSubmit = async () => {
         fecha: fecha,
         hora: hora,
         direccion: formData.direccion,
-        responsables: personas.map(persona => ({
+        responsables: personas.value.map(persona => ({
           nombre: persona.name,
           tiporesponsable_id: parseInt(persona.personType),
           documento: persona.identification,
@@ -139,7 +168,6 @@ const handleSubmit = async () => {
         if (swalResult.isConfirmed) {
           router.push({ name: 'turnos' })
         }
-        // Si hace click en "Crear otro turno", se queda en el formulario y puede limpiar los campos si quieres
       } else {
         const errorMessage = apiError.value || 'Error desconocido'
         Swal.fire({
@@ -160,7 +188,7 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Establecer fecha y hora actual al montar el componente
   const now = new Date()
   const year = now.getFullYear()
@@ -177,8 +205,35 @@ onMounted(() => {
   }
   
   if (isEdit.value) {
-    // Aquí cargaríamos los datos del turno a editar usando el turnoId
-    console.log('Cargando datos del turno:', turnoId.value)
+    // Cargar los datos del turno a editar
+    const result = await getTurnoById(turnoId.value)
+    const turno = result.expediente
+    if (turno) {
+      formData.turno = `${turno.numturno.toString().padStart(4, '0')}-${turno.vigencia}`
+      formData.fecha = `${turno.fecha}T${turno.hora}`
+      formData.direccion = turno.direccion
+
+      // Cargar los responsables
+      if (turno.responsables) {
+        personas.value = turno.responsables.map(resp => ({
+          name: resp.nombre,
+          identification: resp.documento,
+          identificationType: resp.tipodocumento.id,
+          personType: resp.tiporesponsable.id,
+          email: resp.email,
+          phone: resp.telefono
+        }))
+      }
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar el turno',
+        text: apiError.value || 'No se pudo cargar la información del turno',
+        showConfirmButton: true
+      }).then(() => {
+        router.push({ name: 'turnos' })
+      })
+    }
   }
 })
 </script> 

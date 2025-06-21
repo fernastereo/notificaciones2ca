@@ -35,7 +35,7 @@
     <div v-if="confirmDelete.show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 max-w-md mx-4">
         <h3 class="text-lg font-semibold mb-3">Confirmar eliminación</h3>
-        <p class="mb-4">¿Está seguro de que desea eliminar a <span class="font-semibold">{{ persons[confirmDelete.index]?.name }}</span>? Esta acción no se puede deshacer.</p>
+        <p class="mb-4">¿Está seguro de que desea eliminar a <span class="font-semibold">{{ modelValue[confirmDelete.index]?.name }}</span>? Esta acción no se puede deshacer.</p>
         <div class="flex justify-end space-x-3">
           <button 
             @click="cancelDelete" 
@@ -168,7 +168,7 @@
     </div>
     
     <!-- Estado vacío - Mostrar cuando no hay personas -->
-    <div v-if="persons.length === 0 && !showForm" class="empty-state bg-white rounded-lg shadow p-8 text-center">
+    <div v-if="modelValue.length === 0 && !showForm" class="empty-state bg-white rounded-lg shadow p-8 text-center">
       <div class="flex flex-col items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -188,7 +188,7 @@
     </div>
     
     <!-- Tabla de personas - Solo mostrar cuando hay datos -->
-    <div v-if="persons.length > 0" class="bg-white rounded-lg shadow overflow-x-auto">
+    <div v-if="modelValue.length > 0" class="bg-white rounded-lg shadow overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -202,11 +202,11 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="(person, index) in persons" :key="index" class="hover:bg-gray-50">
+          <tr v-for="(person, index) in modelValue" :key="index" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ person.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identification }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiposDocumentoMap.get(person.identificationType) || person.identificationType }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ tiposResponsableMap.get(person.personType) || person.personType }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ getTipoDocumentoNombre(person.identificationType) }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ getTipoResponsableNombre(person.personType) }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -236,6 +236,16 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { useTiposDocumento } from '@/composables/useTiposDocumento'
 import { useTiposResponsable } from '@/composables/useTiposResponsable'
 
+const props = defineProps({
+  modelValue: {
+    type: Array,
+    required: true,
+    default: () => []
+  }
+})
+
+const emit = defineEmits(['update:modelValue'])
+
 // Composable para tipos de documento
 const { tiposDocumento, loading: loadingTipos, getTiposDocumento } = useTiposDocumento()
 const { tiposResponsable, loading: loadingTiposResponsable, getTiposResponsable } = useTiposResponsable()
@@ -244,10 +254,24 @@ const { tiposResponsable, loading: loadingTiposResponsable, getTiposResponsable 
 const tiposDocumentoMap = computed(() => {
   return new Map(tiposDocumento.value.map(tipo => [tipo.id, tipo.nombre]))
 })
-
+console.log("🚀 ~ tiposDocumentoMap:", tiposDocumentoMap)
 const tiposResponsableMap = computed(() => {
   return new Map(tiposResponsable.value.map(tipo => [tipo.id, tipo.nombre]))
 })
+
+// Función para obtener el nombre del tipo de documento
+const getTipoDocumentoNombre = (id) => {
+  // Convertir a número si es string
+  const numId = typeof id === 'string' ? parseInt(id) : id
+  return tiposDocumentoMap.value.get(numId) || id
+}
+
+// Función para obtener el nombre del tipo de responsable
+const getTipoResponsableNombre = (id) => {
+  // Convertir a número si es string
+  const numId = typeof id === 'string' ? parseInt(id) : id
+  return tiposResponsableMap.value.get(numId) || id
+}
 
 // Estado para controlar la visibilidad del formulario
 const showForm = ref(false)
@@ -277,7 +301,7 @@ const alertMessage = reactive({
   show: false,
   type: 'info', // 'success', 'error', 'info'
   text: '',
-  timestamp: Date.now() // Para forzar la recreación de la barra de progreso
+  timestamp: Date.now()
 })
 
 // Estado para confirmación de eliminación
@@ -285,9 +309,6 @@ const confirmDelete = reactive({
   show: false,
   index: -1
 })
-
-// Lista de personas
-const persons = ref([])
 
 // Índice de la persona que se está editando (null si estamos agregando una nueva)
 const editIndex = ref(null)
@@ -362,12 +383,14 @@ const addOrUpdatePerson = () => {
   
   if (editIndex.value !== null) {
     // Actualizar persona existente
-    persons.value[editIndex.value] = personData
+    const updatedPersons = [...props.modelValue]
+    updatedPersons[editIndex.value] = personData
+    emit('update:modelValue', updatedPersons)
     showAlert(`Los datos de ${personData.name} han sido actualizados correctamente`, 'success')
     editIndex.value = null
   } else {
     // Agregar nueva persona
-    persons.value.push(personData)
+    emit('update:modelValue', [...props.modelValue, personData])
     showAlert(`${personData.name} ha sido agregado correctamente`, 'success')
   }
   
@@ -381,7 +404,7 @@ const addOrUpdatePerson = () => {
 // Función para editar una persona
 const editPerson = (index) => {
   // Cargar los datos de la persona en el formulario
-  const person = persons.value[index]
+  const person = props.modelValue[index]
   Object.assign(formData, person)
   
   // Establecer el índice de edición
@@ -405,8 +428,10 @@ const cancelDelete = () => {
 
 // Función para confirmar eliminación
 const confirmDeletePerson = () => {
-  const personName = persons.value[confirmDelete.index].name
-  persons.value.splice(confirmDelete.index, 1)
+  const personName = props.modelValue[confirmDelete.index].name
+  const updatedPersons = [...props.modelValue]
+  updatedPersons.splice(confirmDelete.index, 1)
+  emit('update:modelValue', updatedPersons)
   
   // Si estábamos editando esta persona, resetear el formulario y ocultar
   if (editIndex.value === confirmDelete.index) {
@@ -467,16 +492,6 @@ const closeAlert = () => {
 onMounted(async () => {
   await getTiposDocumento()
   await getTiposResponsable()
-})
-
-// Función para obtener las personas (para ser llamada desde el componente padre)
-const getPersons = () => {
-  return persons.value
-}
-
-// Exponer funciones para el componente padre
-defineExpose({
-  getPersons
 })
 </script>
 
