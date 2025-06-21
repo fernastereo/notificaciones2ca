@@ -114,9 +114,82 @@ export const useTurnos = () => {
     }
   };
 
+  const getTurnoById = async (id) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/expedientes/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        apiError.value = data.message;
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const updateTurno = async (id, turnoData) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const { user } = useAuth();
+
+      const dataToSend = {
+        ...turnoData,
+        user_id: user.value?.id || 1,
+      };
+
+      const response = await fetch(`${BASE_API_URL}/expedientes/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        apiError.value = data.message || `Error HTTP: ${response.status}`;
+        return null;
+      }
+
+      if (data.status === 'error') {
+        apiError.value = data.message;
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error en updateTurno:', error);
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     getTurnos,
     createTurno,
+    getTurnoById,
+    updateTurno,
     turnos,
     apiError,
     loading,
