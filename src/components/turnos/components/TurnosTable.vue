@@ -22,7 +22,7 @@
           {{ `${expediente.numturno.toString().padStart(4, '0')}-${expediente.vigencia}` }}
         </td>
         <td class="px-3 py-3 text-sm whitespace-nowrap text-gray-500">
-          <Badge color="yellow">Revision Juridica</Badge>
+          <Badge :color="expediente.estado.class">{{ expediente.estado.nombre }}</Badge>
         </td>
         <td class="px-3 py-3 text-sm whitespace-nowrap text-gray-700">
           <div v-for="responsable in expediente.responsables" :key="responsable.id" class="flex items-center gap-2">
