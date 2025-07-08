@@ -212,13 +212,13 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <button 
                 @click="editPerson(index)" 
-                class="text-primary hover:text-primary-dark mr-3"
+                class="text-primary hover:text-primary-dark mr-3 cursor-pointer"
               >
                 <PencilSquareIcon class="h-5 w-5" />
               </button>
               <button 
                 @click="showDeleteConfirmation(index)" 
-                class="text-red-600 hover:text-red-900"
+                class="text-red-600 hover:text-red-900 cursor-pointer"
               >
                 <TrashIcon class="h-5 w-5" />
               </button>
@@ -254,7 +254,7 @@ const { tiposResponsable, loading: loadingTiposResponsable, getTiposResponsable 
 const tiposDocumentoMap = computed(() => {
   return new Map(tiposDocumento.value.map(tipo => [tipo.id, tipo.nombre]))
 })
-console.log("🚀 ~ tiposDocumentoMap:", tiposDocumentoMap)
+
 const tiposResponsableMap = computed(() => {
   return new Map(tiposResponsable.value.map(tipo => [tipo.id, tipo.nombre]))
 })
