@@ -2,7 +2,11 @@
   <div class="sm:px-6 md:px-0">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold leading-6 text-gray-900">{{ isEdit ? 'Editar Turno ' + turnoId : 'Nuevo Turno' }}</h1>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl font-semibold leading-6 text-gray-900">{{ isEdit ? 'Turno ' + formData.turno : 'Nuevo Turno' }}</h1>
+          <Badge v-if="isEdit && formData.estado.nombre" :color="formData.estado.class">{{ formData.estado.nombre }}</Badge>
+        </div>
+
         <p class="mt-2 text-sm text-gray-700">
           {{ isEdit ? 'Modifique los datos del turno.' : 'Complete el formulario para crear un nuevo turno.' }}
         </p>
@@ -59,6 +63,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useTurnos } from '@/composables/useTurnos'
 import PersonRegistration from '../components/PersonRegistration.vue'
 import Swal from 'sweetalert2'
+import Badge from '@/components/common/Badge.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -74,7 +79,11 @@ const formData = reactive({
   turno: '',
   fecha: '',
   hora: '',
-  direccion: ''
+  direccion: '',
+  estado: {
+    class: 'gray',  // Valor por defecto
+    nombre: ''
+  }
 })
 
 // Estado para las personas
@@ -212,6 +221,10 @@ onMounted(async () => {
       formData.turno = `${turno.numturno.toString().padStart(4, '0')}-${turno.vigencia}`
       formData.fecha = `${turno.fecha}T${turno.hora}`
       formData.direccion = turno.direccion
+      formData.estado = {
+        class: turno.estado.class,
+        nombre: turno.estado.nombre
+      }
 
       // Cargar los responsables
       if (turno.responsables) {
