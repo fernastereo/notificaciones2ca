@@ -15,7 +15,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span>{{ alertMessage.text }}</span>
-        <button @click="closeAlert" class="ml-auto text-gray-600 hover:text-gray-900">
+        <button @click="closeAlert" type="button" class="ml-auto text-gray-600 hover:text-gray-900">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -32,19 +32,21 @@
     </div>
     
     <!-- Diálogo de confirmación para eliminar -->
-    <div v-if="confirmDelete.show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="confirmDelete.show" class="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-6 max-w-md mx-4">
         <h3 class="text-lg font-semibold mb-3">Confirmar eliminación</h3>
         <p class="mb-4">¿Está seguro de que desea eliminar a <span class="font-semibold">{{ modelValue[confirmDelete.index]?.name }}</span>? Esta acción no se puede deshacer.</p>
         <div class="flex justify-end space-x-3">
           <button 
             @click="cancelDelete" 
+            type="button"
             class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
           >
             Cancelar
           </button>
           <button 
             @click="confirmDeletePerson" 
+            type="button"
             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             Eliminar
@@ -57,6 +59,7 @@
     <div v-if="!showForm" class="mb-4">
       <button 
         @click="showAddForm" 
+        type="button"
         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
       >
         Agregar Persona
@@ -154,12 +157,14 @@
       <div class="mt-4 flex justify-end space-x-3">
         <button 
           @click="cancelForm" 
+          type="button"
           class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
         >
           Cancelar
         </button>
         <button 
           @click="addOrUpdatePerson" 
+          type="button"
           class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           {{ editIndex !== null ? 'Actualizar' : 'Agregar' }}
@@ -177,6 +182,7 @@
         <p class="text-gray-500 mb-6">Comienza agregando una nueva persona a la lista.</p>
         <button 
           @click="showAddForm" 
+          type="button"
           class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary inline-flex items-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -212,12 +218,14 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <button 
                 @click="editPerson(index)" 
+                type="button"
                 class="text-primary hover:text-primary-dark mr-3 cursor-pointer"
               >
                 <PencilSquareIcon class="h-5 w-5" />
               </button>
               <button 
                 @click="showDeleteConfirmation(index)" 
+                type="button"
                 class="text-red-600 hover:text-red-900 cursor-pointer"
               >
                 <TrashIcon class="h-5 w-5" />
@@ -252,24 +260,26 @@ const { tiposResponsable, loading: loadingTiposResponsable, getTiposResponsable 
 
 // Maps para lookup eficiente
 const tiposDocumentoMap = computed(() => {
+  if (!tiposDocumento.value) return new Map()
   return new Map(tiposDocumento.value.map(tipo => [tipo.id, tipo.nombre]))
 })
 
 const tiposResponsableMap = computed(() => {
+  if (!tiposResponsable.value) return new Map()
   return new Map(tiposResponsable.value.map(tipo => [tipo.id, tipo.nombre]))
 })
 
 // Función para obtener el nombre del tipo de documento
 const getTipoDocumentoNombre = (id) => {
   // Convertir a número si es string
-  const numId = typeof id === 'string' ? parseInt(id) : id
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id
   return tiposDocumentoMap.value.get(numId) || id
 }
 
 // Función para obtener el nombre del tipo de responsable
 const getTipoResponsableNombre = (id) => {
   // Convertir a número si es string
-  const numId = typeof id === 'string' ? parseInt(id) : id
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id
   return tiposResponsableMap.value.get(numId) || id
 }
 
@@ -405,6 +415,8 @@ const addOrUpdatePerson = () => {
 const editPerson = (index) => {
   // Cargar los datos de la persona en el formulario
   const person = props.modelValue[index]
+  if (!person) return
+
   Object.assign(formData, person)
   
   // Establecer el índice de edición
@@ -428,6 +440,8 @@ const cancelDelete = () => {
 
 // Función para confirmar eliminación
 const confirmDeletePerson = () => {
+  if (confirmDelete.index === -1 || !props.modelValue[confirmDelete.index]) return
+
   const personName = props.modelValue[confirmDelete.index].name
   const updatedPersons = [...props.modelValue]
   updatedPersons.splice(confirmDelete.index, 1)
