@@ -1,6 +1,10 @@
 <template>
-  <div>
-    <h1>Formulario</h1>
-  </div>
+  <ModalidadRegistration />
 </template>
 
+<script setup>
+  import ModalidadRegistration from '../components/ModalidadRegistration.vue'
+</script>
+
+<style scoped>
+</style>
