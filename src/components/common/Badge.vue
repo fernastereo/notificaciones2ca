@@ -48,6 +48,11 @@ const colorClass = {
     text: 'text-yellow-800',
     fill: 'fill-yellow-500'
   },
+  orange: {
+    background: 'bg-orange-200',
+    text: 'text-orange-700',
+    fill: 'fill-orange-500'
+  },
   indigo: {
     background: 'bg-indigo-100',
     text: 'text-indigo-700',
