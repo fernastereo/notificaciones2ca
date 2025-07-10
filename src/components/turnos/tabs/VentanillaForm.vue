@@ -3,8 +3,8 @@
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <div class="flex items-center gap-2">
-          <h1 class="text-xl font-semibold leading-6 text-gray-900">{{ isEdit ? 'Turno ' + formData.turno : 'Nuevo Turno' }}</h1>
-          <Badge v-if="isEdit && formData.estado.nombre" :color="formData.estado.class">{{ formData.estado.nombre }}</Badge>
+          <h1 class="text-xl font-semibold leading-6 text-gray-900">{{ isEdit ? 'Turno ' + formattedTurnoNumber : 'Nuevo Turno' }}</h1>
+          <Badge v-if="isEdit && turnoData?.estado?.nombre" :color="turnoData.estado.class">{{ turnoData.estado.nombre }}</Badge>
         </div>
 
         <p class="mt-2 text-sm text-gray-700">
@@ -23,7 +23,7 @@
                   <label for="fecha" class="block text-sm font-medium leading-6 text-gray-900">Fecha</label>
                   <div class="mt-2">
                     <input
-                      type="datetime-local" id="fecha" v-model="formData.fecha" disabled
+                      type="datetime-local" id="fecha" v-model="localFormData.fecha" disabled
                       class="block w-full rounded-md bg-gray-200 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                   </div>
@@ -32,7 +32,7 @@
                   <label for="turno" class="block text-sm font-medium leading-6 text-gray-900">Turno</label>
                   <div class="mt-2">
                     <input
-                      type="text" id="turno" v-model="formData.turno" disabled
+                      type="text" id="turno" v-model="formattedTurnoNumber" disabled
                       class="block w-full rounded-md bg-gray-200 text-left px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                   </div>
@@ -42,13 +42,13 @@
                   <label for="direccion" class="block text-sm font-medium leading-6 text-gray-900">Dirección</label>
                   <div class="mt-2">
                     <input 
-                      type="text" id="direccion" v-model="formData.direccion" 
+                      type="text" id="direccion" v-model="localFormData.direccion" 
                       autocomplete="family-name" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                   </div>
                 </div>
               </div>
               <!-- Responsables -->
-              <PersonRegistration v-model="personas" />
+              <PersonRegistration v-model="localFormData.responsables" />
             </form>
           </div>
         </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, inject } from 'vue'
+import { ref, computed, inject, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTurnos } from '@/composables/useTurnos'
 import PersonRegistration from '../components/PersonRegistration.vue'
@@ -67,31 +67,49 @@ import Badge from '@/components/common/Badge.vue'
 
 const router = useRouter()
 const route = useRoute()
-const { createTurno, getTurnoById, updateTurno, loading, apiError } = useTurnos()
+const { createTurno, updateTurno, apiError } = useTurnos()
 
-// Inject para registrar submit handler
+// Inject para registrar submit handler y datos del turno
 const registerSubmit = inject('registerSubmit')
+const turnoData = inject('turnoData')
+const updateTurnoData = inject('updateTurnoData')
 
 const isEdit = computed(() => route.name === 'editar-turno')
-const turnoId = computed(() => route.params.id)
 
-const formData = reactive({
-  turno: '',
+// Estado local del formulario
+const localFormData = ref({
   fecha: '',
-  hora: '',
   direccion: '',
-  estado: {
-    class: 'gray',  // Valor por defecto
-    nombre: ''
-  }
+  responsables: []
 })
 
-// Estado para las personas
-const personas = ref([])
+// Computed para el número de turno formateado
+const formattedTurnoNumber = computed(() => {
+  if (!turnoData.value?.numturno) return ''
+  return `${turnoData.value.numturno.toString().padStart(4, '0')}-${turnoData.value.vigencia}`
+})
+
+// Watch para sincronizar datos del padre
+watch(turnoData, (newValue) => {
+  if (newValue) {
+    localFormData.value = {
+      fecha: `${newValue.fecha}T${newValue.hora}`,
+      direccion: newValue.direccion || '',
+      responsables: newValue.responsables?.map(resp => ({
+        name: resp.nombre,
+        identification: resp.documento,
+        identificationType: resp.tipodocumento.id,
+        personType: resp.tiporesponsable.id,
+        email: resp.email,
+        phone: resp.telefono
+      })) || []
+    }
+  }
+}, { immediate: true })
 
 const handleSubmit = async () => {
   try {
-    if (personas.value.length === 0) {
+    if (localFormData.value.responsables.length === 0) {
       alert('Debe agregar al menos una persona responsable')
       return
     }
@@ -99,8 +117,8 @@ const handleSubmit = async () => {
     if (isEdit.value) {
       // Transformar los datos al formato esperado por el endpoint
       const turnoData = {
-        direccion: formData.direccion,
-        responsables: personas.value.map(persona => ({
+        direccion: localFormData.value.direccion,
+        responsables: localFormData.value.responsables.map(persona => ({
           nombre: persona.name,
           tiporesponsable_id: parseInt(persona.personType),
           documento: persona.identification,
@@ -110,13 +128,13 @@ const handleSubmit = async () => {
         }))
       }
 
-      const result = await updateTurno(turnoId.value, turnoData)
+      const result = await updateTurno(route.params.id, turnoData)
       
       if (result) {
         Swal.fire({
           icon: 'success',
           title: 'Turno actualizado exitosamente',
-          text: `Número de turno: ${formData.turno}`,
+          text: `Número de turno: ${formattedTurnoNumber.value}`,
           showConfirmButton: true,
           confirmButtonText: 'Ir a Home',
           confirmButtonColor: '#4f39f6'
@@ -136,7 +154,7 @@ const handleSubmit = async () => {
       }
     } else {
       // Separar fecha y hora del campo datetime-local
-      const fechaHora = new Date(formData.fecha)
+      const fechaHora = new Date(localFormData.value.fecha)
       const fecha = fechaHora.toISOString().split('T')[0] // YYYY-MM-DD
       const hora = fechaHora.toTimeString().split(' ')[0] // HH:MM:SS
 
@@ -144,8 +162,8 @@ const handleSubmit = async () => {
       const turnoData = {
         fecha: fecha,
         hora: hora,
-        direccion: formData.direccion,
-        responsables: personas.value.map(persona => ({
+        direccion: localFormData.value.direccion,
+        responsables: localFormData.value.responsables.map(persona => ({
           nombre: persona.name,
           tiporesponsable_id: parseInt(persona.personType),
           documento: persona.identification,
@@ -158,13 +176,16 @@ const handleSubmit = async () => {
       const result = await createTurno(turnoData)
       
       if (result) {
-        // Asignar el número de turno al input
-        formData.turno = `${result.numturno.toString().padStart(4, '0')}-${result.vigencia}`
+        // Actualizar los datos del turno en el padre
+        updateTurnoData({
+          numturno: result.numturno,
+          vigencia: result.vigencia
+        })
         
         const swalResult = await Swal.fire({
           icon: 'success',
           title: 'Turno creado exitosamente',
-          text: `Número de turno: ${formData.turno}`,
+          text: `Número de turno: ${formattedTurnoNumber.value}`,
           showConfirmButton: true,
           showCancelButton: true,
           confirmButtonText: 'Ir a Home',
@@ -197,56 +218,22 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(async () => {
-  // Establecer fecha y hora actual al montar el componente
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  
-  formData.fecha = `${year}-${month}-${day}T${hours}:${minutes}`
+onMounted(() => {
+  // Si es un nuevo turno, establecer fecha y hora actual
+  if (!isEdit.value) {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    
+    localFormData.value.fecha = `${year}-${month}-${day}T${hours}:${minutes}`
+  }
   
   // Registrar submit handler con el componente padre
   if (registerSubmit) {
     registerSubmit('Ventanilla', handleSubmit)
-  }
-  
-  if (isEdit.value) {
-    // Cargar los datos del turno a editar
-    const result = await getTurnoById(turnoId.value)
-    const turno = result.expediente
-    if (turno) {
-      formData.turno = `${turno.numturno.toString().padStart(4, '0')}-${turno.vigencia}`
-      formData.fecha = `${turno.fecha}T${turno.hora}`
-      formData.direccion = turno.direccion
-      formData.estado = {
-        class: turno.estado.class,
-        nombre: turno.estado.nombre
-      }
-
-      // Cargar los responsables
-      if (turno.responsables) {
-        personas.value = turno.responsables.map(resp => ({
-          name: resp.nombre,
-          identification: resp.documento,
-          identificationType: resp.tipodocumento.id,
-          personType: resp.tiporesponsable.id,
-          email: resp.email,
-          phone: resp.telefono
-        }))
-      }
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al cargar el turno',
-        text: apiError.value || 'No se pudo cargar la información del turno',
-        showConfirmButton: true
-      }).then(() => {
-        router.push({ name: 'turnos' })
-      })
-    }
   }
 })
 </script> 
