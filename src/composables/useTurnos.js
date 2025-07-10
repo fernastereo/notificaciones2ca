@@ -185,11 +185,51 @@ export const useTurnos = () => {
     }
   };
 
+  const updateTurnoFormulario = async (id, turnoData) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const response = await fetch(
+        `${BASE_API_URL}/expediente-formulario/${id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.value}`,
+          },
+          body: JSON.stringify(turnoData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        apiError.value = data.message || `Error HTTP: ${response.status}`;
+        return null;
+      }
+
+      if (data.status === 'error') {
+        apiError.value = data.message;
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error en updateTurnoFormulario:', error);
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     getTurnos,
     createTurno,
     getTurnoById,
     updateTurno,
+    updateTurnoFormulario,
     turnos,
     apiError,
     loading,
