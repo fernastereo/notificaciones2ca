@@ -211,8 +211,8 @@
           <tr v-for="(person, index) in modelValue" :key="index" class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ person.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identification }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ getTipoDocumentoNombre(person.identificationType) }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ getTipoResponsableNombre(person.personType) }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identificationTypeName }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.personTypeName }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -291,7 +291,9 @@ const formData = reactive({
   name: '',
   identification: '',
   identificationType: '',
+  identificationTypeName: '',
   personType: '',
+  personTypeName: '',
   email: '',
   phone: ''
 })
@@ -390,7 +392,9 @@ const addOrUpdatePerson = () => {
   
   // Crear una copia del objeto formData
   const personData = { ...formData }
-  
+  personData.identificationTypeName = getTipoDocumentoNombre(personData.identificationType)
+  personData.personTypeName = getTipoResponsableNombre(personData.personType)
+
   if (editIndex.value !== null) {
     // Actualizar persona existente
     const updatedPersons = [...props.modelValue]

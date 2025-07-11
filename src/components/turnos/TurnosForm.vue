@@ -89,11 +89,6 @@ const tabs = [
     icon: ClipboardDocumentCheckIcon
   },
   { 
-    name: 'Notas', 
-    component: NotasForm,
-    icon: DocumentPlusIcon
-  },
-  { 
     name: 'Preliquidación', 
     component: PreliquidacionForm,
     icon: CurrencyDollarIcon

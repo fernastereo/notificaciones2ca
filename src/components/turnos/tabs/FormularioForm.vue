@@ -160,7 +160,6 @@ const localFormData = ref({
 
 // Watch para sincronizar datos del padre
 watch(turnoData, (newValue) => {
-  console.log("🚀 ~ watch ~ newValue:", newValue)
   if (newValue) {
     localFormData.value = {
       objeto_id: newValue.objeto.id || '',

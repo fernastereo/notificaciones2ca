@@ -72,6 +72,7 @@ const { createTurno, updateTurno, apiError } = useTurnos()
 // Inject para registrar submit handler y datos del turno
 const registerSubmit = inject('registerSubmit')
 const turnoData = inject('turnoData')
+
 const updateTurnoData = inject('updateTurnoData')
 
 const isEdit = computed(() => route.name === 'editar-turno')
@@ -99,7 +100,9 @@ watch(turnoData, (newValue) => {
         name: resp.nombre,
         identification: resp.documento,
         identificationType: resp.tipodocumento.id,
+        identificationTypeName: resp.tipodocumento.nombre,
         personType: resp.tiporesponsable.id,
+        personTypeName: resp.tiporesponsable.nombre,
         email: resp.email,
         phone: resp.telefono
       })) || []

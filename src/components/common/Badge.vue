@@ -14,7 +14,7 @@ const props = defineProps({
     type: String,
     required: true,
     default: 'gray',
-    validator: (value) => ['gray', 'green', 'red', 'blue', 'yellow', 'indigo'].includes(value)
+    validator: (value) => ['gray', 'green', 'red', 'blue', 'yellow', 'indigo', 'orange'].includes(value)
   }
 })
 
