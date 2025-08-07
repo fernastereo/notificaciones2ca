@@ -28,7 +28,7 @@
               <!-- Sidebar component, swap this element with another sidebar if you like -->
               <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
                 <div class="flex h-16 shrink-0 items-center">
-                  <img class="h-8 w-auto" src="@/assets/logo-removebg.png" alt="Curaduria 2 Barranquilla" />
+                  <img class="h-8 w-auto" src="@/assets/logo2ca.png" alt="Curaduria 2 Cartagena" />
                 </div>
                 <nav class="flex flex-1 flex-col">
                   <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -49,7 +49,7 @@
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6">
         <div class="flex h-16 shrink-0 items-center justify-center">
-          <img class="h-14 w-auto" src="@/assets/logo-removebg.png" alt="Curaduria 2 Barranquilla" />
+          <img class="h-14 w-auto" src="@/assets/logo2ca.png" alt="Curaduria 2 Cartagena" />
         </div>
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">

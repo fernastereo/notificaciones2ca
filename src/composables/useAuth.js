@@ -137,6 +137,54 @@ export const useAuth = () => {
     }
   };
 
+  const register = async (userData) => {
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    const { username, password, email, name } = userData;
+
+    authError.value = null;
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          email,
+          name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        authError.value = data.message;
+        return {
+          success: false,
+          message: data.message,
+        };
+      }
+
+      // Si el registro es exitoso, iniciamos sesión automáticamente
+      const loginSuccess = await login({ username, password });
+
+      return {
+        success: loginSuccess,
+        message: loginSuccess
+          ? 'Registro exitoso'
+          : 'Registro exitoso, pero hubo un problema al iniciar sesión',
+      };
+    } catch (e) {
+      authError.value = e.message;
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
+  };
+
   return {
     user: readonly(user),
     token: readonly(token),
@@ -148,6 +196,7 @@ export const useAuth = () => {
     setToken,
     setUser,
     getUser,
+    register,
   };
 }
 

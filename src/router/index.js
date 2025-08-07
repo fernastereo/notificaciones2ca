@@ -1,5 +1,6 @@
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
+import RegisterView from '@/views/RegisterView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
@@ -13,50 +14,44 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
     {
+      path: '/register',
+      name: 'register',
+      component: RegisterView,
+      meta: { requiresAuth: false },
+    },
+    {
       path: '/home',
       component: HomeView,
       meta: { requiresAuth: true },
       children: [
         {
-          path: '', // Esta será la ruta por defecto -> '/dashboard'
+          path: '', // Esta será la ruta por defecto -> '/publicaciones'
           name: 'home',
-          component: () => import('@/views/DashboardView.vue'),
+          component: () => import('@/views/PublicacionesView.vue'),
         },
         {
-          path: 'dashboard',
-          name: 'dashboard',
-          redirect: { name: 'home' },
-        },
-        {
-          path: 'turnos',
-          component: () => import('@/views/TurnosView.vue'),
+          path: 'publicaciones',
+          component: () => import('@/views/PublicacionesView.vue'),
           children: [
             {
               path: '',
-              name: 'turnos',
-              component: () => import('@/components/turnos/TurnosList.vue'),
+              name: 'publicaciones',
+              component: () =>
+                import('@/components/publicaciones/PublicacionesList.vue'),
             },
             {
               path: 'nuevo',
-              name: 'nuevo-turno',
-              component: () => import('@/components/turnos/TurnosForm.vue'),
+              name: 'nuevo-publicaciones',
+              component: () =>
+                import('@/components/publicaciones/PublicacionesForm.vue'),
             },
             {
               path: 'editar/:id',
-              name: 'editar-turno',
-              component: () => import('@/components/turnos/TurnosForm.vue'),
+              name: 'editar-publicaciones',
+              component: () =>
+                import('@/components/publicaciones/PublicacionesForm.vue'),
             },
           ],
-        },
-        {
-          path: 'pqr',
-          name: 'pqr',
-          component: () => import('@/views/PqrView.vue'),
-        },
-        {
-          path: 'reportes',
-          name: 'reportes',
-          component: () => import('@/views/ReportesView.vue'),
         },
       ],
     },
