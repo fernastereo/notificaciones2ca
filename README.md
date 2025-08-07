@@ -1,4 +1,4 @@
-## Intranet 2CA
+## Gestión de Publicaciones 2CA
 
 Aplicación web construida con Vue 3 + Vite para la gestión interna de la Curaduría Urbana 2 de Cartagena. Incluye autenticación, gestión de publicaciones (listado, creación y edición), transiciones amigables entre vistas, paginación local y carga incremental.
 
