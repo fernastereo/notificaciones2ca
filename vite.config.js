@@ -8,6 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), vueDevTools(), tailwindcss()],
+  base: '/tests/front_apicuraduria2ca/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
