@@ -1,11 +1,13 @@
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import NotFoundView from '@/views/NotFoundView.vue';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const router = createRouter({
-  history: createWebHistory('/tests/front_apicuraduria2ca/'),
+  history: createWebHashHistory(BASE_URL),
   routes: [
     {
       path: '/',
@@ -63,11 +65,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       // component: () => import('../views/PqrView.vue'),
     },
-    // {
-    //   path: '/:pathMatch(.*)*',
-    //   name: 'not-found',
-    //   component: 'NotFoundView',
-    // },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: NotFoundView,
+      meta: { requiresAuth: false },
+    },
   ],
 });
 
