@@ -21,6 +21,8 @@ npm install
 Crea un archivo `.env.local` en la raíz del proyecto con la URL base del API:
 ```bash
 VITE_BASE_API_URL=https://tu-api.example.com
+VITE_BASE_URL=/carpeta-instalacion/
+VITE_AWS_URL=https://tu-ruta-al-bucket-de-aws-s3.com
 ```
 Endpoints usados actualmente por la app:
 - Autenticación: `POST /login`, `POST /register`
@@ -156,7 +158,7 @@ Se usa en `PublicacionesForm.vue` y `PublicacionesList.vue` para poblar selects 
 - Vitest + Vue Test Utils (`npm run test:unit`)
 
 ### Despliegue
-1. Configura variables de entorno en el servidor (`VITE_BASE_API_URL`)
+1. Configura variables de entorno a usar en el servidor
 2. Genera build de producción:
 ```bash
 npm run build
