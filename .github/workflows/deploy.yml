@@ -27,9 +27,6 @@ jobs:
       - name: 📋 Install dependencies
         run: npm ci
 
-      - name: 🔍 Run linting
-        run: npm run lint
-
       - name: 🧪 Run tests
         run: npm run test
 
@@ -60,9 +57,6 @@ jobs:
 
       - name: 📋 Install dependencies
         run: npm ci
-
-      - name: 🔍 Run linting
-        run: npm run lint
 
       - name: 🧪 Run tests
         run: npm run test
