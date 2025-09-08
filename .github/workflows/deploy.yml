@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: 🧪 Run tests
-        run: npm run test
+        run: npm run test:unit
 
       - name: 🏗️ Test build
         run: npm run build
@@ -59,7 +59,7 @@ jobs:
         run: npm ci
 
       - name: 🧪 Run tests
-        run: npm run test
+        run: npm run test:unit
 
       - name: 🏗️ Build for production
         run: npm run build
