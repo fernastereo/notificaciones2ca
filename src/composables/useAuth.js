@@ -167,14 +167,9 @@ export const useAuth = () => {
         };
       }
 
-      // Si el registro es exitoso, iniciamos sesión automáticamente
-      const loginSuccess = await login({ username, password });
-
       return {
-        success: loginSuccess,
-        message: loginSuccess
-          ? 'Registro exitoso'
-          : 'Registro exitoso, pero hubo un problema al iniciar sesión',
+        success: true,
+        message: data.message
       };
     } catch (e) {
       authError.value = e.message;

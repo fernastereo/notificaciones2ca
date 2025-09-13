@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <!-- Logo Section -->
       <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img class="mx-auto h-30 w-auto" src="@/assets/logo2ca.png" alt="Curaduria Urbana 2 Cartagena" />
+        
         <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Crear nueva cuenta</h2>
       </div>
 
@@ -88,21 +88,6 @@
                 Las contraseñas no coinciden
               </div>
             </div>
-
-            <!-- Términos y condiciones -->
-            <div class="flex items-center">
-              <input
-                id="terms"
-                v-model="form.acceptTerms"
-                type="checkbox"
-                required
-                class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              />
-              <label for="terms" class="ml-2 block text-sm text-gray-700">
-                Acepto los 
-                <a href="#" class="text-red-600 hover:text-red-500">términos y condiciones</a>
-              </label>
-            </div>
           </div>
 
           <div>
@@ -114,21 +99,11 @@
               {{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta' }}
             </button>
           </div>
-
-          <div v-if="registrationError" class="text-center text-red-500 text-sm">
+         <div v-if="registrationError" class="text-center text-red-500 text-sm">
             {{ registrationError }}
           </div>
-
-          <div class="text-center">
-            <span class="text-sm text-gray-600">
-              ¿Ya tienes una cuenta? 
-              <router-link 
-                :to="{ name: 'login' }" 
-                class="font-semibold leading-6 text-red-600 hover:text-red-500"
-              >
-                Inicia sesión aquí
-              </router-link>
-            </span>
+          <div v-if="result" class="text-center text-green-500 text-sm">
+            {{ result }}
           </div>
         </form>
       </div>
@@ -143,6 +118,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const auth = useAuth()
+const result = ref('');
 
 const form = ref({
   fullName: '',
@@ -150,7 +126,7 @@ const form = ref({
   username: '',
   password: '',
   confirmPassword: '',
-  acceptTerms: false
+  acceptTerms: true
 })
 
 const isLoading = ref(false)
@@ -172,9 +148,9 @@ const isFormValid = computed(() => {
 
 const handleSubmit = async () => {
   if (!isFormValid.value) return
-
   isLoading.value = true
   registrationError.value = ''
+  result.value = ''
 
   const userData = {
     name: form.value.fullName,
@@ -188,7 +164,15 @@ const handleSubmit = async () => {
 
     if (success) {
       // El login se realiza automáticamente en el composable
-      router.push({ name: 'publicaciones' })
+      result.value = message
+      form.value = {
+        fullName: '',
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+        acceptTerms: true
+      }
     } else {
       registrationError.value = message
     }

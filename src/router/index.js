@@ -15,12 +15,7 @@ const router = createRouter({
       component: LoginView,
       meta: { requiresAuth: false },
     },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView,
-      meta: { requiresAuth: false },
-    },
+
     {
       path: '/home',
       component: HomeView,
@@ -54,6 +49,12 @@ const router = createRouter({
                 import('@/components/publicaciones/PublicacionesForm.vue'),
             },
           ],
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: RegisterView,
+          meta: { requiresAuth: false },
         },
       ],
     },

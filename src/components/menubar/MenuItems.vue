@@ -17,7 +17,7 @@
 
 <script setup>
   import { computed } from 'vue'
-  import { DocumentDuplicateIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
+  import { DocumentDuplicateIcon, ArrowRightStartOnRectangleIcon, UserPlusIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, useRoute } from 'vue-router'
   
   // Definir el emit
@@ -27,6 +27,7 @@
   
   const navigation = [
     { name: 'Publicaciones', href: { name: 'publicaciones' }, icon: DocumentDuplicateIcon },
+    { name: 'Crear Usuarios', href: { name: 'register' }, icon: UserPlusIcon },
   ]
 
   const isActive = (href) => {

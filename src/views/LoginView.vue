@@ -2,7 +2,8 @@
   <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <img class="mx-auto h-40 w-auto" src="@/assets/logo2ca.png" alt="Curaduria Urbana 2 Cartagena" />
-      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Conectese a su cuenta</h2>
+      <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Gestión de Publicaciones</h2>
+      <h2 class="mt-2 text-center text-xl font-semibold tracking-tight text-gray-900">Conectese a su cuenta</h2>
     </div>
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form class="space-y-6" @submit.prevent="handleLogin">
@@ -25,7 +26,7 @@
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
             <div class="text-sm">
-              <a href="#" class="font-semibold text-red-600 hover:text-indigo-500">Olvidó su password?</a>
+              <!-- <a href="#" class="font-semibold text-red-600 hover:text-indigo-500">Olvidó su password?</a> -->
             </div>
           </div>
           <div class="mt-2">
@@ -57,17 +58,6 @@
           </button>
         </div>
       </form>
-
-      <!-- Enlace de registro -->
-      <p class="mt-8 text-center text-sm text-gray-600">
-        ¿No tiene una cuenta?
-        <router-link 
-          :to="{ name: 'register' }" 
-          class="font-semibold leading-6 text-red-600 hover:text-red-500"
-        >
-          Registrarse aquí
-        </router-link>
-      </p>
     </div>
   </div>
 </template>
