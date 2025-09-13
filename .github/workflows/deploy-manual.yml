@@ -6,7 +6,7 @@ on:
       server_dir:
         description: "FTP destination directory"
         required: false
-        default: "/public_html/admin/"
+        default: "/projects.fernandocueto.com/admin/"
       note:
         description: "Optional note for this deploy"
         required: false
