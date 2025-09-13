@@ -1,4 +1,4 @@
-name: 🚀 Manual Deploy
+name: 🚀 Manual Deploy to fernandocueto.com
 
 on:
   workflow_dispatch:
