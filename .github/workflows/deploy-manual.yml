@@ -36,7 +36,7 @@ jobs:
           VITE_BASE_API_URL: ${{ secrets.FC_VITE_BASE_API_URL }}
           VITE_BASE_URL: ${{ secrets.FC_VITE_BASE_URL }}
           VITE_AWS_URL: ${{ secrets.FC_VITE_AWS_URL }}
-          VITE_AWS_DEPLOY_SERVER: ${{ secrets.FC_VITE_AWS_DEPLOY_SERVER }}
+          VITE_AWS_DEPLOY_SERVER: ${{ secrets.FC_VITE_DEPLOY_SERVER }}
 
       - name: 📦 Create deployment package
         run: |

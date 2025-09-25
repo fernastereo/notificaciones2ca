@@ -36,6 +36,7 @@ jobs:
           VITE_BASE_API_URL: ${{ secrets.VITE_BASE_API_URL }}
           VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
           VITE_AWS_URL: ${{ secrets.VITE_AWS_URL }}
+          VITE_AWS_DEPLOY_SERVER: ${{ secrets.VITE_DEPLOY_SERVER }}
 
   # Job para hacer deploy a producción
   deploy:
@@ -67,7 +68,7 @@ jobs:
           VITE_BASE_API_URL: ${{ secrets.VITE_BASE_API_URL }}
           VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
           VITE_AWS_URL: ${{ secrets.VITE_AWS_URL }}
-          VITE_AWS_DEPLOY_SERVER: ${{ secrets.VITE_AWS_DEPLOY_SERVER }}
+          VITE_AWS_DEPLOY_SERVER: ${{ secrets.VITE_DEPLOY_SERVER }}
 
       - name: 📦 Create deployment package
         run: |
