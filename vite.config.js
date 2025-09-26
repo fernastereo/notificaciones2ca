@@ -15,7 +15,6 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const server = env.VITE_DEPLOY_SERVER || 'local';
   const base = pathBase[server] || '/';
-  console.log('🚀 ~ base:', base);
 
   return {
     plugins: [vue(), vueDevTools(), tailwindcss()],
